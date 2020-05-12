@@ -1068,7 +1068,7 @@ def rpn_bbox_loss_graph(config, target_bbox, rpn_match, rpn_bbox):
                                    config.IMAGES_PER_GPU)
 
     loss = smooth_l1_loss(target_bbox, rpn_bbox)
-    
+
     loss = K.switch(tf.size(loss) > 0, K.mean(loss), tf.constant(0.0))
     return loss
 
@@ -2141,13 +2141,14 @@ class MaskRCNN():
         Returns path to weights file.
         """
         from keras.utils.data_utils import get_file
-        TF_WEIGHTS_PATH_NO_TOP = 'https://github.com/fchollet/deep-learning-models/'\
-                                 'releases/download/v0.2/'\
-                                 'resnet50_weights_tf_dim_ordering_tf_kernels_notop.h5'
-        weights_path = get_file('resnet50_weights_tf_dim_ordering_tf_kernels_notop.h5',
-                                TF_WEIGHTS_PATH_NO_TOP,
-                                cache_subdir='models',
-                                md5_hash='a268eb855778b3df3c7506639542a6af')
+        TF_WEIGHTS_PATH_NO_TOP ='' #'https://github.com/fchollet/deep-learning-models/'\
+                                 #'releases/download/v0.2/'\
+                                 #'resnet50_weights_tf_dim_ordering_tf_kernels_notop.h5'
+        weights_path = ''#get_file('resnet50_weights_tf_dim_ordering_tf_kernels_notop.h5',
+                        #        TF_WEIGHTS_PATH_NO_TOP,
+                        #        cache_subdir='models',
+                        #        md5_hash='a268eb855778b3df3c7506639542a6af')
+
         return weights_path
 
     def compile(self, learning_rate, momentum):
@@ -2248,7 +2249,7 @@ class MaskRCNN():
         now = datetime.datetime.now()
 
         # If we have a model path with date and epochs use them
-        if model_path:
+        if model_path!= '':
             # Continue from we left of. Get epoch and date from the file name
             # A sample model path might look like:
             # \path\to\logs\coco20171029T2315\mask_rcnn_coco_0001.h5 (Windows)
@@ -2356,11 +2357,11 @@ class MaskRCNN():
         # Work-around for Windows: Keras fails on Windows when using
         # multiprocessing workers. See discussion here:
         # https://github.com/matterport/Mask_RCNN/issues/13#issuecomment-353124009
-        if os.name is 'nt':
-            workers = 0
-        else:
-            workers = multiprocessing.cpu_count()
-
+        #if os.name is 'nt':
+        #    workers = 0
+        #else:
+        #    workers = multiprocessing.cpu_count()
+        workers=1
         self.keras_model.fit_generator(
             train_generator,
             initial_epoch=self.epoch,
@@ -2371,7 +2372,7 @@ class MaskRCNN():
             validation_steps=self.config.VALIDATION_STEPS,
             max_queue_size=100,
             workers=workers,
-            use_multiprocessing=True,
+            use_multiprocessing=False,
         )
         self.epoch = max(self.epoch, epochs)
 
